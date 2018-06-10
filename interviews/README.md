@@ -1,4 +1,4 @@
-# Sysadmit Intervie Questions
+# Sysadmin Interview Questions
 
 The questions reported here comes from the [Linux Sysadmin Interview](https://github.com/chassing/linux-sysadmin-interview-questions) repository published on Github.
 
