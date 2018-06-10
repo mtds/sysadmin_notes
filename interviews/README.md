@@ -1,4 +1,4 @@
-# Sysadmin Interview Questions
+# Sysadmit Intervie Questions
 
 The questions reported here comes from the [Linux Sysadmin Interview](https://github.com/chassing/linux-sysadmin-interview-questions) repository published on Github.
 
@@ -6,7 +6,115 @@ I took the liberty to reorganize or remove some of the questions, whenever I dee
  
 ## <a name='toc'>Table of Contents</a>
 
+  1. [General Questions](#general)
   1. [Simple Linux Questions](#simple)
+
+#### [[⬆]](#toc) <a name='general'>General Questions:</a>
+
+### What function does DNS play on a network?
+
+The Domain Name System (DNS) is a hierarchical decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It associates various information with domain names assigned (NS/MX/TXT records too) to each of the participating entities. Most prominently, it translates more readily memorized domain names to the numerical IP addresses needed for locating and identifying computer services and devices with the underlying network protocols.
+
+Reference: [DNS page on Wikipedia](https://en.wikipedia.org/wiki/Domain_Name_System)
+
+### What is HTTP?
+
+The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed, collaborative, and hypermedia information systems.[1] HTTP is the foundation of data communication for the World Wide Web. Hypertext is structured text that uses logical links (hyperlinks) between nodes containing text. HTTP is the protocol to exchange or transfer hypertext.
+
+Reference: [HTTP page on Wikipedia](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol)
+
+### What is an HTTP proxy and how does it work?
+
+In computer networks, a proxy server is a server (a computer system or an application) that acts as an intermediary for requests from clients seeking resources from other servers. A client connects to the proxy server, requesting some service, such as a file, connection, web page, or other resource available from a different server and the proxy server evaluates the request as a way to simplify and control its complexity.
+
+A HTTP proxy speaks the HTTP protocol and it's especially made for HTTP connections:
+
+1. The browser (CLIENT) sends GET http://SERVER/path HTTP/1.1 to the PROXY.
+2. Now the PROXY will forward the actual request to the SERVER.
+3. The SERVER will only see the PROXY as connection and answer to the PROXY just like to a CLIENT.
+4. The PROXY receives the response and forwards it back to the CLIENT.
+
+The process is (usually) transparent to the client and nearly like directly communicating with the server. Additional headers could be introduced by the proxy itself and the content traversing the proxy can be changed for various reasons. Some proxies for example include your real IP in a special HTTP HEADER which can be logged server-side, or intercepted in their scripts. 
+
+References: 
+- [Proxy Server on Wikipedia](https://en.wikipedia.org/wiki/Proxy_server)
+- [Proxy servers and tunneling (Mozilla Developers Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling)
+
+### Describe briefly how HTTPS works.
+
+HTTPS takes the well-known and understood HTTP protocol, and layers a SSL/TLS encryption layer on top of it. Servers and clients still speak exactly the same HTTP to each other, but over a secure SSL connection that encrypts and decrypts their requests and responses.
+
+An SSL connection between a client and server is set up by a handshake which goes through the following steps:
+- verify if the client is talking to the right server and viceversa;
+- both parties have to agreed on a "cipher suite", which includes which encryption algorithm they will use to exchange data;
+- both parties have to agreed on any necessary keys for the aforementioned algorithm.
+
+Once the connection is established, both parties can use the agreed algorithm and keys to securely send messages to each other. The handshake process can be broken up in three main phases (Hello, Certificate Exchange and Key Exchange).
+
+Reference: [How does HTTPS actually works?](https://robertheaton.com/2014/03/27/how-does-https-actually-work/)
+
+### What is SMTP? Give the basic scenario of how a mail message is delivered via SMTP.
+
+Simple Mail Transfer Protocol is an Internet Standard for Electronic Mail Transmission. SMTP defines the message format and the message transfer agent (MTA), which stores and forwards the mail. SMTP is a relatively simple, text-based protocol, where one or more recipients of a message are specified and then the message text is transferred.
+
+References:
+- [SMTP page on Wikipedia](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)
+- [The SMTP Transaction](http://www.tldp.org/HOWTO/Spam-Filtering-for-MX/smtpintro.html)
+
+### What is RAID? What is RAID0, RAID1, RAID5, RAID10?
+
+RAID stands for Redundancy Array of Independent Disks. It is a way to make multiple disks/drives operate as one drive and provide striping, mirroring and parity depending on the type of RAID used.
+
+- RAID 0
+
+![RAID 0](/imgs/raid0.png)
+
+RAID 0 (also known as a stripe set or striped volume) splits ("stripes") data evenly across two or more disks, without parity information, redundancy, or fault tolerance. Since RAID 0 provides no fault tolerance or redundancy, the failure of one drive will cause the entire array to fail; as a result of having data striped across all disks, the failure will result in total data loss. This configuration is typically implemented having speed as the intended goal.[2][3] RAID 0 is normally used to increase performance, although it can also be used as a way to create a large logical volume out of two or more physical disks.
+
+- RAID 1
+
+![RAID 1](/imgs/raid1.png)
+
+RAID 1 consists of an exact copy (or mirror) of a set of data on two or more disks; a classic RAID 1 mirrored pair contains two disks. This configuration offers no parity, striping, or spanning of disk space across multiple disks, since the data is mirrored on all disks belonging to the array, and the array can only be as big as the smallest member disk. This layout is useful when read performance or reliability is more important than write performance or the resulting data storage capacity. The array will continue to operate so long as at least one member drive is operational.
+
+- RAID 5
+
+![RAID 5](/imgs/raid5.png)
+
+RAID 5 consists of block-level striping with distributed parity. Parity information is distributed among the drives. It requires that all drives but one be present to operate. Upon failure of a single drive, subsequent reads can be calculated from the distributed parity such that no data is lost. RAID 5 requires at least three disks.
+
+- RAID 10
+
+![RAID 10](/imgs/raid10.png)
+
+RAID 10 or RAID 1+0 is a combination of RAID 1 and RAID 0. It provides mirroring and striping for redundancy and higher performance.The main disadvantage is that it needs half the disk space for mirroring while it provides more redundancy and higher performance.
+
+References:
+- [Standard RAID levels (Wikipedia)](https://en.wikipedia.org/wiki/Standard_RAID_levels)
+- [Nested RAID levels (Wikipedia)](https://en.wikipedia.org/wiki/Nested_RAID_levels)
+
+### What is a level 0 backup? What is an incremental backup?
+
+**Level 0** backup is a full backup where the entire data is backed up byte to byte. **Incremental backup** captures only the changes made since the last incremental backup. In incremental backup, only the newly made changes since the last backup are stored. In the latter case you save both time and disk space but the cost are slow recoveries and the risk of losing data (in case some of the incremental backups was lost).
+
+### Describe the general file system hierarchy of a Linux system.
+
+```
+/bin       Essential command binaries
+/boot      Static files of the boot loader
+/dev       Device files
+/etc       Host-specific system configuration
+/lib       Essential shared libraries and kernel modules
+/media     Mount point for removeable media
+/mnt       Mount point for mounting a filesystem temporarily
+/opt       Add-on application software packages
+/sbin      Essential system binaries
+/srv       Data for services provided by this system
+/tmp       Temporary files
+/usr       Secondary hierarchy
+/var       Variable data
+/proc      Process information for the kernel. Updated dynamically by the kernel.
+```
 
 #### [[⬆]](#toc) <a name='simple'>Simple Linux Questions:</a>
 
