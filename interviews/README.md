@@ -1,6 +1,6 @@
 # Sysadmin Interview Questions
 
-The following is a small attempt to collect a little bit of Sysadmin knowledge and respond to most of the questions posed in the [linux sysadmin interview repo](https://github.com/chassing/linux-sysadmin-interview-questions) published on Github.
+The questions reported here comes from the [Linux Sysadmin Interview](https://github.com/chassing/linux-sysadmin-interview-questions) repository published on Github.
 
 I took the liberty to reorganize or remove some of the questions, whenever I deemed it necessary.
  
