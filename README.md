@@ -16,6 +16,7 @@ The following repo is a small attempt to collect a little bit of Sysadmin knowle
 
 ## References
 
+- [Archlinux Wiki](https://wiki.archlinux.org/index.php/Table_of_contents)
 - [Awesome Sysadmin](https://github.com/kahun/awesome-sysadmin)
 - [Awesome Site Reliability Engineer](https://github.com/dastergon/awesome-sre)
 - [Digital Ocean Community Tutorials (series)](https://www.digitalocean.com/community/tutorials?primary_filter=series)
