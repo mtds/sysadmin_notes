@@ -8,6 +8,7 @@ I took the liberty to reorganize or remove some of the questions, whenever I dee
 
   1. [General Questions](#general)
   1. [Simple Linux Questions](#simple)
+  1. [Medium Linux Questions](#medium)
 
 #### [[⬆]](#toc) <a name='general'>General Questions:</a>
 
@@ -304,3 +305,92 @@ Checklist:
 - Verify that the web server configuration (Apache, NGINX, etc.) has not changed.
 - If the web application is using a DB as a backend, verify if the anything related to the missed resource was changed.
 
+#### [[⬆]](#toc) <a name='medium'>Medium Linux Questions:</a>
+
+### What do the following commands do and how would you use them?
+
+* ``tee``: read from standard input and write to standard output and files.
+* ``awk``: it is a powerful method for processing or analyzing text files—in particular, data files that are organized by lines (rows) and columns.
+* ``tr``: translate or delete characters.
+* ``cut``: remove sections from each line of files.
+* ``tac``: concatenate and print files in reverse.
+* ``curl``: a tool to transfer data from or to a server (it supports ftp/ftps,http/https,ldap/ldaps,imap/imaps,smtp/smtps,etc.).
+* ``wget``: utility for non-interactive download of files from the Web. It supports HTTP, HTTPS, and FTP protocols, as well as retrieval through HTTP proxies.
+* ``watch``: execute a program periodically, showing output fullscreen.
+* ``head``: output the first N lines of a file.
+* ``tail``: output the last N lines of a file.
+
+### What does an ``&`` after a command do?
+
+This is known as __job control__ under Linux/Unix. With ``&`` the process starts in the background, so it is possible to use the shell and do not have to wait until the script is finished. Jobs in background will be reported with ``jobs``. Using ``fg`` the command previously in background will be reported in foreground, whicle it's possible to use the combination of Ctrl-Z and then ``bg`` to put a command/script in background.
+
+### What does ``& disown`` after a command do?
+
+After the command is put in background by ``&``, ``disown`` removes the job from the shell's job list. It means basically that the command in background will not be listed by ``jobs``, it cannot be turned into a foreground job using ``fg`` and it will not receive a SIGHUP if the shell receives this signal.
+
+### What is a packet filter and how does it work?
+
+Packet filtering is a firewall technique used to control network access by monitoring outgoing and incoming packets and allowing them to pass or halt based on the source and destination Internet Protocol (IP) addresses, protocols and ports. During network communication, a node transmits a packet that is filtered and matched with predefined rules and policies. Once matched, a packet is either accepted or denied.
+
+### What is Virtual Memory?
+
+Linux supports virtual memory, that is, using a disk as an extension of RAM so that the effective size of usable memory grows correspondingly. The kernel will write the contents of a currently unused block of memory to the hard disk so that the memory can be used for another purpose. When the original contents are needed again, they are read back into memory. This is all made completely transparent to the user; programs running under Linux only see the larger amount of memory available and don't notice that parts of them reside on the disk from time to time. Of course, reading and writing the hard disk is slower (on the order of a thousand times slower) than using real memory, so the programs don't run as fast. The part of the hard disk that is used as virtual memory is called the swap space.
+
+Reference: [Linux Systems Administrator Guide](https://www.tldp.org/LDP/sag/html/vm-intro.html)
+
+### What is swap and what is it used for?
+
+Linux divides its physical RAM (random access memory) into chunks of memory called pages. Swapping is the process whereby a page of memory is copied to the preconfigured space on the hard disk, called swap space, to free up that page of memory. The combined sizes of the physical memory and the swap space is the amount of virtual memory available.
+
+Reference: [Swap (Archlinux Wiki](https://wiki.archlinux.org/index.php/swap)
+
+### What is an A record, an NS record, a PTR record, a CNAME record, an MX record?
+
+* ``A``:    it specifies an IP address (IPv4) for a given host.
+* ``NS``:   it specifies an authoritative name server for a given host or domain.
+* ``MX``:   it specifies a mail exchange server for a DNS domain name. The information is used by SMTP to route emails to proper hosts. 
+* ``PTR``:  as opposed to forward DNS resolution (A and AAAA DNS records), this record is used to look up host/domain names based on an IP address.
+* ``CNAME``: it specifies a DNS alias for a domain or host name.
+
+### Are there any other RRs and what are they used for?
+
+Additional ``Resource Records`` are:
+* ``SOA``: it specifies core information about a DNS zone, including the primary name server, the email of the domain administrator, the domain serial number, and several timers relating to refreshing the zone.
+* ``TXT``: the text record can hold arbitrary non-formatted text string. Typically, the record is used by __SPF__.
+
+### What is a Split-Horizon DNS?
+
+Split-horizon DNS is designed to provide different authoritative answers, usually selected by the source address of the DNS request. One common use case for Split-horizon DNS is when a webserver has a private IP address on a local area network, but the world accesses it at a NAT'ed public address. By using split-horizon DNS the same URL can lead to either private IP address or public IP address for different client machines. This allows for critical local client machines to access a webserver directly through a network switch, without the need to pass through a router. Passing through fewer network devices improves the network latency.
+
+### What is the sticky bit?
+
+A sticky bit is a permission bit that is set on a directory and allows only the owner or the root user to delete or rename files int. No other user has the needed privileges to delete files created by some other user. Use: ``chmod (+|-)t /dir``.
+
+### What does the immutable bit do to a file?
+
+A file with an immutable attribute cannot be:
+
+- Modified
+- Deleted
+- Renamed
+- Subject to symlinks (hard or soft), including the root user.
+
+Only root or a process possessing the ``CAP_LINUX_IMMUTABLE`` capability can set or clear this attribute. Attributes can be added or removed with ``chattr`` and listed with ``lsattr``.
+
+### What is the difference between hardlinks and symlinks? What happens when you remove the source to a symlink/hardlink?
+
+### What is an inode and what fields are stored in an inode?
+
+The inode is a data structure in a Unix-style file system that describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data. Filesystem object attributes may include metadata (times of last change, access, modification), as well as owner and permission data. Directories are lists of names assigned to inodes. A directory contains an entry for itself, its parent, and each of its children.
+
+Reference: [Inode (Wikipedia)](https://en.wikipedia.org/wiki/Inode)
+
+### How to force/trigger a file system check on next reboot?
+
+### What is SNMP and what is it used for?
+
+### What is a runlevel and how to get the current runlevel?
+
+### What is SSH port forwarding?
+
+SSH port forwarding is a mechanism in SSH for tunneling application ports from the client machine to the server machine, or vice versa. It can be used for adding encryption to legacy applications, going through firewalls, accessing network services behind NAT (reverse tunnel), etc.
