@@ -379,6 +379,12 @@ Only root or a process possessing the ``CAP_LINUX_IMMUTABLE`` capability can set
 
 ### What is the difference between hardlinks and symlinks? What happens when you remove the source to a symlink/hardlink?
 
+**Hard Links**: In Linux, whenever you perform an listing in a directory, the listing is actually a list of references that map to an inode. An hard link is yet another reference to the same inode as the original file and it allows a user to create two exact files without having to duplicate the data on disk. However unlike creating a copy, if you modify the hard link you are in turn modifying the original file as well as they both reference the same inode. Hard links have some limitations however, in most (but not all) Unix/Linux distributions hard links cannot be created for directories. Hard links are also not allowed to cross file systems, since inodes are unique to each single file system.
+
+**Symbolic Links**: A symbolic link is similar to a hard link in that it is used to link to an already existing file, however it is very different in its implementation. A symbolic link is not a reference to an inode but rather an pointer that redirects to another file or directory. Differently from hard links, symlinks can be used to reference a file in another file system or to point to a directory.
+
+__Differences__: Since a hard link is simply a reference to an inode, you can actually delete the original file and the data will still be available via the hard link while with a symlink, if the target is deleted, it will no longer be able to provide data.
+
 ### What is an inode and what fields are stored in an inode?
 
 The inode is a data structure in a Unix-style file system that describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data. Filesystem object attributes may include metadata (times of last change, access, modification), as well as owner and permission data. Directories are lists of names assigned to inodes. A directory contains an entry for itself, its parent, and each of its children.
@@ -387,9 +393,46 @@ Reference: [Inode (Wikipedia)](https://en.wikipedia.org/wiki/Inode)
 
 ### How to force/trigger a file system check on next reboot?
 
+If it's only needed once then it is sufficient to do: ``touch /forcefsck``. For more regular filesystem checks, it is possible to use the ``tune2fs`` command:
+
+```bash
+>>> tune2fs -c 30 /dev/sda1 # force checks every 30 mounts
+>>> tune2fs -i 3m /dev/sda1 # force checks every 3 months
+```
+
 ### What is SNMP and what is it used for?
 
+Simple Network Management Protocol (SNMP) is an internet standard protocol which can be used to remotely retrieve operational statistics on devices attached to the network (e.g. routers, switches, firewalls, etc.). SNMP data can be collected through NMS (Network Management System) like Zabbix, OpenNMS, Nagios, Zenoss.
+
+Reference: [SNMP (Linux Journal)](https://www.linuxjournal.com/content/snmp)
+
 ### What is a runlevel and how to get the current runlevel?
+
+A runlevel is one of the modes that a Unix-based operating system will run in. Each runlevel has a certain number of services stopped or started, giving the user control over the behavior of the machine. Conventionally, seven runlevels exist, numbered from zero to six:
+
+| Run Level | Mode        |      Action
+|-----------|-------------|----------------
+|    0	    |     Halt	  |  Shuts down system
+|    1	    | Single-User |  Does not configure network interfaces, start daemons, or allow non-root logins
+|    2      |  Multi-User |  Does not configure network interfaces or start daemons
+|    3      |  Multi-User |  Starts the system normally, including networking
+|    4      |  Undefined  |  Not used/User-definable
+|    5      |     X11     |  As runlevel 3 + display manager(X11/Xorg)
+|    6      |    Reboot   |  Reboots the system
+
+**init** based systems:
+
+```bash
+>>> /sbin/runlevel
+N 3
+```
+
+**systemd** based systems: SystemD uses "targets" instead of run-levels and relies on the ``systemctl`` command to change runlevel or to change the target.
+
+```bash
+>>> systemctl get-default
+multi-user.target
+```
 
 ### What is SSH port forwarding?
 
