@@ -437,3 +437,142 @@ multi-user.target
 ### What is SSH port forwarding?
 
 SSH port forwarding is a mechanism in SSH for tunneling application ports from the client machine to the server machine, or vice versa. It can be used for adding encryption to legacy applications, going through firewalls, accessing network services behind NAT (reverse tunnel), etc.
+
+### What is the difference between local and remote port forwarding?
+
+* __Local forwarding__ is used to forward a port from the client machine to the server machine. Basically, the SSH client listens for connections on a configured port, and when it receives a connection, it tunnels the connection to an SSH server. The server connects to a configurated destination port, possibly on a different machine than the SSH server.
+
+```bash
+>>> ssh -L 80:intra.example.com:80 gw.example.com
+```
+This example opens a connection to the gw.example.com jump server, and forwards any connection to port 80 on the local machine to port 80 on intra.example.com.
+
+* __Remote forwarding__ allows anyone on the remote server to connect to an TCP/UDP port on the remote server. The connection will then be tunneled back to the client host, and the client then makes a TCP/UDP connection to a local port on localhost. Any other host name or IP address could be used instead of localhost to specify the host to connect to.
+
+```bash
+>>> ssh -R 8080:localhost:80 public.example.com
+```
+This particular example would be useful for giving someone on the outside access to an internal web server. Or exposing an internal web application to the public Internet. This feature could be stopped on the SSH gateway with the sshd_config: ``GatewayPorts no``.
+
+References:
+* [SSH Tunneling examples (ssh.com)](https://www.ssh.com/ssh/tunneling/example)
+* [SSH Tunnel - Local and Remote Port Forwarding Explained With Examples](https://blog.trackets.com/2014/05/17/ssh-tunnel-local-and-remote-port-forwarding-explained-with-examples.html)
+
+### What are the steps to add a user to a system without using useradd/adduser?
+
+1. Add an entry for the user in /etc/passwd file (using ``vipw``).
+2. Add an entry for the group in /etc/group file (using ``vigr``).
+3. Create the home directory for the new user.
+4. Copy the files undeer ``/etc/skel`` to the newly created home directory.
+5. Set the new user password using the ``passwd`` command.
+
+### What is MAJOR and MINOR numbers of special files?
+
+One of the basic features of the Linux kernel is that it abstracts the handling of devices. All hardware devices look like regular files; they can be opened, closed, read and written using the same, standard, system calls that are used to manipulate files. Every device in the system is represented by a file. For block (disk) and character devices, these device files are created by the ``mknod`` command and they describe the device using __major__ and __minor__ device numbers. Network devices are also represented by device special files but they are created by Linux as it finds and initializes the network controllers in the system.
+
+The __major number__ identifies the driver associated with the device. For example, ``/dev/null`` and ``/dev/zero`` are both managed by driver 1, whereas virtual consoles and serial terminals are managed by driver 4; similarly, both vcs1 and vcsa1 devices are managed by driver 7. The kernel uses the major number at open time to dispatch execution to the appropriate driver.
+
+The __minor number__ is used only by the driver specified by the major number; other parts of the kernel don’t use it, and merely pass it along to the driver. It is common for a driver to control several devices; the minor number provides a way for the driver to differentiate among them.
+
+Reference:  [Linux Device Drivers (2nd Edition, O'Reilly)](https://www.safaribooksonline.com/library/view/linux-device-drivers/0596000081/)
+
+### Describe the mknod command and when you'd use it.
+
+``mknod`` is the command used to create device files (character or block devices). It follows the syntax:
+
+```bash
+>>> mknod device-name device-type(c|b) major-number minor-number
+```
+
+* device-name - full name of device (e.g. ``/dev/random``).
+* device-type - device files can represent two types of device, a storage device (block) or a device use for other purpose (character). 
+  - block devices are things like cd-roms, hard drives, etc. 
+  - character devices are things like /dev/zero, /dev/null, or any other device not used to store info.
+* major-number - driver associated with the device.
+* minor-number - the number of the device within the group.
+
+### Describe a scenario when you get a "filesystem is full" error, but 'df' shows there is free space.
+
+One possibility is that the filesystem ran  out of __inodes__.
+
+### Describe a scenario when deleting a file, but 'df' not showing the space being freed.
+
+On Linux or Unix systems, deleting a file via rm or through a file manager application will unlink the file from the file system's directory structure; however, if the file is still open (in use by a running process) it will still be accessible to this process and will continue to occupy space on disk. Therefore such processes may need to be restarted before that file's space will be cleared up on the filesystem. It is useful in this case to identify processes which are still have opened files on the filesystem with ``lsof``.
+
+Reference: [Why is space not being freed from disk after deleting a file? (Red Hat portal)](https://access.redhat.com/solutions/2316)
+
+### Describe how 'ps' works.
+
+On Linux, the ps command works by reading files in the [proc filesystem](https://en.wikipedia.org/wiki/Procfs#Linux).
+
+Reference: [Linux Kernel docs about procfs](https://www.kernel.org/doc/Documentation/filesystems/proc.txt) 
+
+### What happens to a child process that dies and has no parent process to wait for it and what’s bad about this?
+
+### Explain briefly each one of the process states.
+
+status |  cause
+-------|-------
+   D   | uninterruptible sleep (usually IO)
+   R   |running or runnable (on run queue)
+   S   | interruptible sleep (waiting for an event to complete)
+   T   | stopped, either by a job control signal or because it is being traced
+   Z   | defunct ("zombie") process, terminated but not reaped by its parent
+
+Life cycle of a process:
+
+* Spawn
+* Waiting
+* Runnable
+* Running
+* Stopped
+* Zombie
+* Removed from process table
+
+### How to know which process listens on a specific port?
+
+### What is a zombie process and what could be the cause of it?
+
+### You run a bash script and you want to see its output on your terminal and save it to a file at the same time. How could you do it?
+
+### Explain what echo "1" > /proc/sys/net/ipv4/ip_forward does.
+
+### Describe briefly the steps you need to take in order to create and install a valid certificate for the site https://foo.example.com.
+
+### Can you have several HTTPS virtual hosts sharing the same IP?
+
+### What is a wildcard certificate?
+
+### Which Linux file types do you know?
+
+### What is the difference between a process and a thread? And parent and child processes after a fork system call?
+
+### What is the difference between exec and fork?
+
+### What is "nohup" used for?
+
+### What is the difference between these two commands?
+
+* ``myvar=hello``
+* ``export myvar=hello``
+
+### How many NTP servers would you configure in your local ntp.conf?
+
+### What does the column 'reach' mean in ``ntpq -p`` output?
+
+### You need to upgrade kernel at 100-1000 servers, how you would do this?
+
+### How can you get Host, Channel, ID, LUN of SCSI disk?
+
+### How can you limit process memory usage?
+
+### What is bash quick substitution/caret replace(^x^y)?
+
+### What is a tarpipe (or, how would you go about copying everything, including hardlinks and special files, from one server to another)?
+
+### How can you tell if the httpd package was already installed?
+
+### How can you list the contents of a package?
+
+### Can you explain to me the difference between block based, and object based storage?
+
