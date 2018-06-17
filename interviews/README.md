@@ -509,6 +509,12 @@ Reference: [Linux Kernel docs about procfs](https://www.kernel.org/doc/Documenta
 
 ### What happens to a child process that dies and has no parent process to wait for it and what’s bad about this?
 
+An orphan process is a computer process whose parent process has finished or terminated, though it remains running itself. In a Unix-like operating system any orphaned process will be immediately adopted by the special init system process: the kernel sets the parent to init. This operation is called re-parenting and occurs automatically. Even though technically the process has the "init" process as its parent, it is still called an orphan process since the process that originally created it no longer exists. In other systems orphaned processes are immediately terminated by the kernel. In modern Linux systems, an orphan process may be reparented to a **subreaper** process instead of init.
+
+References:
+* [Orphaned Processes (Wikipedia)](https://en.wikipedia.org/wiki/Orphan_process)
+* [Zombie Processes (Wikipedia)](https://en.wikipedia.org/wiki/Zombie_process)
+
 ### Explain briefly each one of the process states.
 
 status |  cause
@@ -529,50 +535,151 @@ Life cycle of a process:
 * Zombie
 * Removed from process table
 
-### How to know which process listens on a specific port?
-
 ### What is a zombie process and what could be the cause of it?
 
-### You run a bash script and you want to see its output on your terminal and save it to a file at the same time. How could you do it?
+On Unix and Unix-like computer operating systems, a zombie process or defunct process is a process that has completed execution (via the exit system call) but still has an entry in the process table: it is a process in the "Terminated state". If a parent process never calls wait(), its zombie children will stick around in memory until they’re cleaned up.
 
-### Explain what echo "1" > /proc/sys/net/ipv4/ip_forward does.
-
-### Describe briefly the steps you need to take in order to create and install a valid certificate for the site https://foo.example.com.
-
-### Can you have several HTTPS virtual hosts sharing the same IP?
-
-### What is a wildcard certificate?
-
-### Which Linux file types do you know?
+Linux systems have a finite number of process IDs (32767 by default otherwise check with ``cat /proc/sys/kernel/pid_max``). If zombies are accumulating at a very quick rate - for example, if improperly programmed server software is creating zombie processes under load - the entire pool of available PIDs will eventually become assigned to zombie processes, preventing other processes from launching.
 
 ### What is the difference between a process and a thread? And parent and child processes after a fork system call?
 
+* Threads
+  - Will by default share memory
+  - Will share file descriptors
+  - Will share filesystem context
+  - Will share signal handling
+
+* Processes
+  - Will by default not share memory
+  - Most file descriptors not shared
+  - Don't share filesystem context
+  - Don't share signal handling
+
+After forking, the child is a copy of the parent, with both returning from the system call executing the same code, differing only in return value: the child's PID to the parent, zero to the child.
+
 ### What is the difference between exec and fork?
 
+The __fork()__ system call will spawn a new child process which is an identical process to the parent except that has a new system process ID. The process is copied in memory from the parent and a new process structure is assigned by the kernel. The return value of the function is which discriminates the two threads of execution. A zero is returned by the fork function in the child's process. The environment, resource limits, umask, controlling terminal, current working directory, root directory, signal masks and other process resources are also duplicated from the parent in the forked child process.
+
+Forking provides a way for an existing process to start a new one, but what about the case where the new process is not part of the same program as parent process? This is the case in the shell; when a user starts a command it needs to run in a new process, but it is unrelated to the shell. This is where the __exec()__ system call comes into play. ``exec`` will replace the contents of the currently running process with the information from a program binary. Thus the process the shell follows when launching a new program is to firstly fork, creating a new process, and then exec (i.e. load into memory and execute) the program binary it is supposed to run.
+
+### How can you limit process memory usage?
+
+* Easiest way would be using ulimit or configuring ``/etc/security/limits.conf``.
+* Modern Linux systems added support for __cgroups__ (control groups), a kernel feature that allows you to allocate resources - such as CPU time, system memory, network bandwidth, or combinations of these resources - among hierarchically ordered groups of processes running on a system. 
+
+Reference: [Cgroups (RedHat Resource Management Guide)](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/resource_management_guide/chap-introduction_to_control_groups)
+
 ### What is "nohup" used for?
+
+It allows to keep a program spawned from the shell running, even when the shell is closed.
+
+```bash
+>>> nohup my_script &
+```
+
+### How to know which process listens on a specific port?
+
+There are three different ways:
+
+* ``netstat -ltunp`` (Shows all PIDs listening for TCP/UDP connections).
+* ``fuser 7000/tcp`` (Find out the processes PID that opened tcp port 7000).
+* ``lsof -i :80 | grep LISTEN`` (List all PIDs listening for connections on port 80).
+
+Additional information about a process could always be extracted from ``/proc/$PID``.
+
+### You run a bash script and you want to see its output on your terminal and save it to a file at the same time. How could you do it?
 
 ### What is the difference between these two commands?
 
 * ``myvar=hello``
 * ``export myvar=hello``
 
+### What is bash quick substitution/caret replace(^x^y)?
+
+### Explain what echo "1" > /proc/sys/net/ipv4/ip_forward does.
+
+Enable the 'IP Forwarding', a feature of the Linux kernel. In this case, it is just a synonym for "routing".
+
+### What is a wildcard certificate?
+
+In computer networking, a wildcard certificate is a public key certificate which can be used with multiple subdomains of a domain. The principal use is for securing web sites with HTTPS, but there are also applications in many other fields. Compared with conventional certificates, a wildcard certificate can be cheaper and more convenient than a certificate for each subdomain.
+
+Reference: [Wildcard Certificate (Wikipedia)](https://en.wikipedia.org/wiki/Wildcard_certificate)
+
+### Describe briefly the steps you need to take in order to create and install a valid certificate for the site https://foo.example.com.
+
+* Create a Certificate Signing Request (CSR) for the domain.
+* Once the CSR is ready, it can be submitted to a certification authority (CA) to be signed.
+
+Reference: [OpenSSL essentials (Digital Ocean)](https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs)
+
+### Can you have several HTTPS virtual hosts sharing the same IP?
+
+Yes, it is possible thanks to an extension to the SSL protocol called __Server Name Indication__ (RFC 4366), which allows the client to include the requested hostname in the first message of its SSL handshake (connection setup). This allows the server to determine the correct named virtual host for the request and set the connection up accordingly from the start.
+
+Reference: [SSL with Virtual Hosts Using SNI (Apache Wiki)](https://wiki.apache.org/httpd/NameBasedSSLVHostsWithSNI)
+
+### Which Linux file types do you know?
+
+* ``-`` : regular file (text files, images, binary files, shared libraries, etc.)
+* ``d`` : directory
+* ``c`` : character device file
+* ``b`` : block device file
+* ``s`` : local socket file (they are used for communication between processes, for example services like X, syslog, etc.)
+* ``p`` : named pipe (allow communication between two local processes)
+* ``l`` : symbolic link
+
 ### How many NTP servers would you configure in your local ntp.conf?
+
+At least three servers.
+
+References: 
+* [NTP Advanced Configuration](http://www.ntp.org/ntpfaq/NTP-s-config-adv.htm)
+* [NTP Best Practices](https://insights.sei.cmu.edu/sei_blog/2017/04/best-practices-for-ntp-services.html)
 
 ### What does the column 'reach' mean in ``ntpq -p`` output?
 
+The value displayed in column **reach** is __octal__, and it represents the reachability register. One digit in the range of 0 to 7 represents three bits. The initial value of that register is 0, and after every poll that register is shifted left by one position. If the corresponding time source sent a valid response, the rightmost bit is set.
+
+During a normal startup the registers values are these: 0, 1, 3, 7, 17, 37, 77, 177, 377
+
+References:
+* [NTP FAQ (Troubleshooting section)](http://www.ntp.org/ntpfaq/NTP-s-trouble.htm)
+* [Understanding reachbility statistics (Linux Journal)](https://www.linuxjournal.com/article/6812)
+
 ### You need to upgrade kernel at 100-1000 servers, how you would do this?
 
-### How can you get Host, Channel, ID, LUN of SCSI disk?
+1. Isolate a small subset of the server fleet with identical HW specs.
+2. Proceed with the kernel upgrade.
+3. Let this subset of the server fleet run for a period of time which last three or four days.
+4. If anything goes well (no kernel panics, services running as expected, etc.) proceed further to upgrade the server fleet.
 
-### How can you limit process memory usage?
-
-### What is bash quick substitution/caret replace(^x^y)?
+References:
+* [Byte.nl: upgrade 2000 Ubuntu servers](https://www.byte.nl/blog/dont-run-this-on-any-system-you-expect-to-be-up-they-said-but-we-did-it-anyway)
+* [Live Upgrading Thousands of Servers from an Ancient Red Hat Distribution to 10 Year Newer Debian Based One (Google - LISA 2013)](https://www.usenix.org/system/files/conference/lisa13/lisa13-merlin.pdf)
 
 ### What is a tarpipe (or, how would you go about copying everything, including hardlinks and special files, from one server to another)?
 
+The simplest tar pipe possible would be the following:
+
+```bash
+>>> (cd src && tar -cf - .) | (cd dest && tar -xpf -)
+```
+
+It basically means "copy the src directory to dst, preserving permissions and other special stuff." It does this by firing up two tars - one tarring up src, the other untarring to dst, and wiring them together.
+
 ### How can you tell if the httpd package was already installed?
+
+* RedHat/CentOS/Fedora: ``yum list installed | grep httpd``
+* Debian/Ubuntu: ``dpkg --list | grep httpd``
 
 ### How can you list the contents of a package?
 
+* Debian/Ubuntu: ``dpkg -L <package>``
+* RedHat/CentOS/Fedora: ``repoquery -l <package>``
+
 ### Can you explain to me the difference between block based, and object based storage?
+
+### How can you get Host, Channel, ID, LUN of SCSI disk?
 
