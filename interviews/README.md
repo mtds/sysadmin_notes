@@ -9,6 +9,7 @@ I took the liberty to reorganize or remove some of the questions, whenever I dee
   1. [General Questions](#general)
   1. [Simple Linux Questions](#simple)
   1. [Medium Linux Questions](#medium)
+  1. [Hard Linux Questions](#hard)
 
 #### [[⬆]](#toc) <a name='general'>General Questions:</a>
 
@@ -704,3 +705,100 @@ References:
 ### How can you get Host, Channel, ID, LUN of SCSI disk?
 
 Easiest way: ``cat /proc/scsi/scsi`` or look into the kernel ring buffer with: ``dmesg | grep -i "attached "``.
+
+#### [[⬆]](#toc) <a name='hard'>Hard Linux Questions:</a>
+
+### What is a tunnel and how you can bypass a http proxy?
+
+### What is the difference between IDS and IPS?
+
+### What shortcuts do you use on a regular basis?
+
+### What is the Linux Standard Base?
+
+The Linux Standard Base (LSB) is a joint project by several Linux distributions under the organizational structure of the Linux Foundation to standardize the software system structure, including the filesystem hierarchy used in the Linux operating system. The LSB is based on the POSIX specification, the Single UNIX Specification (SUS), and several other open standards, but extends them in certain areas.
+
+Reference: [Linux Standard Base (Wikipedia)](https://en.wikipedia.org/wiki/Linux_Standard_Base)
+
+### What is an atomic operation?
+
+### Your freshly configured http server is not running after a restart, what can you do?
+
+### What kind of keys are in ~/.ssh/authorized_keys and what it is this file used for?
+
+### I've added my public ssh key into authorized_keys but I'm still getting a password prompt, what can be wrong?
+
+### Did you ever create RPM's, DEB's or solaris pkg's?
+
+### What does ```:(){ :|:& };:``` do on your system?
+
+It's the Bash __fork bomb__ and it is nothing but a bash function which get executed recursively using the **fork** operation. If proper limits are not configured correctly (e.g. ``nproc`` under ``/etc/security/limits.conf``) it would be possible to saturate the resources available on the machine till the point it's not usable anymore until rebooted.
+
+### How do you catch a Linux signal on a script?
+
+In Bash it's possible to do that with the ``trap`` statement, which has the following syntax:
+
+```
+trap [COMMANDS] [SIGNALS]
+```
+
+This instructs the trap command to catch the listed SIGNALS, which may be signal names with or without the SIG prefix, or signal numbers. If a signal is 0 or EXIT, the COMMANDS are executed when the shell exits. If one of the signals is DEBUG, the list of COMMANDS is executed after every simple command. A signal may also be specified as ERR; in that case COMMANDS are executed each time a simple command exits with a non-zero status.
+
+Reference: [Catching Signals (Bash Guide)](http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_12_02.html)
+
+### Can you catch a SIGKILL?
+
+No, it's not possible: __SIGKILL__ or __SIGSTOP__ signals cannot be caught or ignored. It's instead possible to catch __SIGTERM__.
+
+### What's happening when the Linux kernel is starting the OOM killer and how does it choose which process to kill first?
+
+The Linux kernel allocates memory upon the demand of the applications running on the system. Because many applications allocate their memory up front and often don't utilize the memory allocated, the kernel was designed with the ability to over-commit memory to make memory usage more efficient. This over-commit model allows the kernel to allocate more memory than it actually has physically available. If a process actually utilizes the memory it was allocated, the kernel then provides these resources to the application. When too many applications start utilizing the memory they were allocated, the over-commit model sometimes becomes problematic and the kernel must start killing processes in order to stay operational. The mechanism the kernel uses to recover memory on the system is referred to as the out-of-memory killer or OOM killer for short.
+
+The OOM Killer works by reviewing all running processes and assigning them a score: the process that has the highest score is the one that is killed.Brief list of criteria used by the OOM killer: 
+
+* The process and all of its childs are using a lot of memory.
+* The minimum number of processes are killed (ideally one) in order to free up enough memory to resolve the situation.
+* Root, Kernel and important system processes are given much lower scores.
+
+Reference: [Configure the Linux OOM Killer](http://www.oracle.com/technetwork/articles/servers-storage-dev/oom-killer-1911807.html)
+
+### Describe the linux boot process with as much detail as possible, starting from when the system is powered on and ending when you get a prompt.
+
+Brief schematic summary:
+
+1. Power On
+2. Load BIOS/UEFI for NVRAM
+3. Probe for Hardware
+4. Select boot device (disk, network, ...)
+5. Identify EFI system partition
+6. Load Boot Loader (e.g. GRUB)
+7. Determine which Kernel to boot
+8. Load Kernel
+9. Instantiate Kernel data structures
+10. Start init/systemd (as PID 1)
+11. Execute startup scripts
+12. Running system
+
+### What's a chroot jail?
+
+### When trying to umount a directory it says it's busy, how to find out which PID holds the directory?
+
+### What's LD_PRELOAD and when it's used?
+
+LD_PRELOAD is an optional environmental variable containing one or more paths to shared libraries, or shared objects, that the loader will load before any other shared library including the C runtime library (libc.so). This operation is called __library preloading__, it means that its functions will be used before others of the same name in later libraries. This enables library functions to be intercepted and replaced (overwritten.) As a result program behavior can be non-invasively modified, i.e. a recompile is not necessary.
+
+References: 
+* Man page Linux Dynamic Loader: ``man 8 ld-linux``
+* [All about LD_PRELOAD](https://blog.fpmurphy.com/2012/09/all-about-ld_preload.html)
+* [LD_PRELOAD Tutorial (Catonmat)](http://www.catonmat.net/blog/simple-ld-preload-tutorial/)
+
+### You ran a binary and nothing happened. How would you debug this?
+
+### What are cgroups? Can you specify a scenario where you could use them?
+
+### How can you remove/delete a file with file-name consisting of only non-printable/non-type-able characters?
+
+### How can you increase or decrease the priority of a process in Linux?
+
+### What are run-levels in Linux?
+
