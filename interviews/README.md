@@ -590,12 +590,22 @@ Additional information about a process could always be extracted from ``/proc/$P
 
 ### You run a bash script and you want to see its output on your terminal and save it to a file at the same time. How could you do it?
 
+```bash
+>>> ntpq -p | tee output
+```
+
 ### What is the difference between these two commands?
 
 * ``myvar=hello``
 * ``export myvar=hello``
 
+When ``export`` is used the variable ``myvar`` is available to __any process__ spawned from the same shell. In the first case we have a simple assignment which means the scope of ``myvar`` is limited only to the shell itself. There's also the edge case: ``myvar=hello command``, in this case the variable is also available in the command subprocess environment.
+
 ### What is bash quick substitution/caret replace(^x^y)?
+
+It's a feature called __history expansion__: it will take the last command and replace the first instance of "x" with "y".
+
+Reference: [Catonmat: The Definitive Guide to Bash Command Line History](http://www.catonmat.net/blog/the-definitive-guide-to-bash-command-line-history/)
 
 ### Explain what echo "1" > /proc/sys/net/ipv4/ip_forward does.
 
@@ -646,7 +656,7 @@ During a normal startup the registers values are these: 0, 1, 3, 7, 17, 37, 77, 
 
 References:
 * [NTP FAQ (Troubleshooting section)](http://www.ntp.org/ntpfaq/NTP-s-trouble.htm)
-* [Understanding reachbility statistics (Linux Journal)](https://www.linuxjournal.com/article/6812)
+* [Understanding reachability statistics (Linux Journal)](https://www.linuxjournal.com/article/6812)
 
 ### You need to upgrade kernel at 100-1000 servers, how you would do this?
 
@@ -654,6 +664,8 @@ References:
 2. Proceed with the kernel upgrade.
 3. Let this subset of the server fleet run for a period of time which last three or four days.
 4. If anything goes well (no kernel panics, services running as expected, etc.) proceed further to upgrade the server fleet.
+
+Supposedly, you can rely on configuration management tools (Cfengine, Ansible, Chef, SaltStack, etc.) to do the upgrade process programmatically. If possible, tools like [Spacewalk](https://spacewalkproject.github.io/) and [Foreman](https://www.theforeman.org/) from RedHat or [Landscape](https://landscape.canonical.com/) from Canonical can help further in the process of managing upgrades for hundreds of servers.
 
 References:
 * [Byte.nl: upgrade 2000 Ubuntu servers](https://www.byte.nl/blog/dont-run-this-on-any-system-you-expect-to-be-up-they-said-but-we-did-it-anyway)
@@ -681,5 +693,14 @@ It basically means "copy the src directory to dst, preserving permissions and ot
 
 ### Can you explain to me the difference between block based, and object based storage?
 
+* __Block Storage__ devices provide fixed-sized raw storage capacity. Each storage volume can be treated as an independent disk drive and controlled by an external server operating system. This block device can be mounted by the guest operating system as if it were a physical disk. The most common examples of Block Storage are SAN, iSCSI, and local disks.
+
+* __Object Storage__  is a computer data storage architecture that manages data as objects, as opposed to other storage architectures like file systems which manage data as a file hierarchy, and block storage which manages data as blocks within sectors and tracks. Each object typically includes the data itself, a variable amount of metadata, and a globally unique identifier. Object storage can be implemented at multiple levels, including the device level (object-storage device), the system level, and the interface level. In each case, object storage seeks to enable capabilities not addressed by other storage architectures, like interfaces that can be directly programmable by the application, a namespace that can span multiple instances of physical hardware, and data-management functions like data replication and data distribution at object-level granularity.
+
+References:
+* [Object Storage (Wikipedia)](https://en.wikipedia.org/wiki/Object_storage)
+* [Object Storage and Block Storage use cases](https://cloudacademy.com/blog/object-storage-block-storage/)
+
 ### How can you get Host, Channel, ID, LUN of SCSI disk?
 
+Easiest way: ``cat /proc/scsi/scsi`` or look into the kernel ring buffer with: ``dmesg | grep -i "attached "``.
