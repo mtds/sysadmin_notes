@@ -712,7 +712,9 @@ Easiest way: ``cat /proc/scsi/scsi`` or look into the kernel ring buffer with: `
 
 ### What is the difference between IDS and IPS?
 
-### What shortcuts do you use on a regular basis?
+* __Firewall__ - A device or application that analyzes packet headers and enforces policy based on protocol type, source address, destination address, source port, and/or destination port. Packets that do not match policy are rejected.
+* __Intrusion Detection System__ - A device or application that analyzes whole packets, both header and payload, looking for known events. When a known event is detected a log message is generated detailing the event.
+* __Intrusion Prevention System__ - A device or application that analyzes whole packets, both header and payload, looking for known events. When a known event is detected the packet is rejected.
 
 ### What is the Linux Standard Base?
 
@@ -727,8 +729,6 @@ Reference: [Linux Standard Base (Wikipedia)](https://en.wikipedia.org/wiki/Linux
 ### What kind of keys are in ~/.ssh/authorized_keys and what it is this file used for?
 
 ### I've added my public ssh key into authorized_keys but I'm still getting a password prompt, what can be wrong?
-
-### Did you ever create RPM's, DEB's or solaris pkg's?
 
 ### What does ```:(){ :|:& };:``` do on your system?
 
@@ -781,7 +781,13 @@ Brief schematic summary:
 
 ### What's a chroot jail?
 
+A chroot on Unix operating systems is an operation that changes the apparent root directory for the current running process and its children. A program that is run in such a modified environment cannot name (and therefore normally cannot access) files outside the designated directory tree. The term "chroot" may refer to the chroot(2) system call or the chroot(8) wrapper program. The modified environment is called a chroot jail.
+
+Reference: [Chroot (Wikipedia)](https://en.wikipedia.org/wiki/Chroot)
+
 ### When trying to umount a directory it says it's busy, how to find out which PID holds the directory?
+
+It's possibile with **lsof**: `` lsof +d '/some/directory'``
 
 ### What's LD_PRELOAD and when it's used?
 
