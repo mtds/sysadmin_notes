@@ -21,6 +21,7 @@ The following repo is a small attempt to collect a little bit of Sysadmin knowle
 - [Awesome Sysadmin](https://github.com/kahun/awesome-sysadmin)
 - [Awesome Site Reliability Engineer](https://github.com/dastergon/awesome-sre)
 - [Digital Ocean Community Tutorials (series)](https://www.digitalocean.com/community/tutorials?primary_filter=series)
+- [Roadmap for the LPIC exam (IBM DeveloperWorks)](https://www.ibm.com/developerworks/linux/library/l-lpic1-map/index.html?ca=drs-)
 
 ## License
 
