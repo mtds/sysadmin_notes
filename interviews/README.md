@@ -710,6 +710,12 @@ Easiest way: ``cat /proc/scsi/scsi`` or look into the kernel ring buffer with: `
 
 ### What is a tunnel and how you can bypass a http proxy?
 
+Tunneling is a way to transform data frames to allow them pass networks with incompatible address spaces or even incompatible protocols. There are different kinds of tunnels: some process only IPv4 packets and some can carry any type of frame. Linux kernel supports three tunnel types: IPIP (IPv4 in IPv4), GRE (IPv4/IPv6 over IPv4) and SIT (IPv6 over IPv4). Tunnels are managed with the ``ip`` program, part of the Iproute2 package.
+
+References:
+* [Tunneling (Linux Foundation Wiki)](https://wiki.linuxfoundation.org/networking/tunneling)
+* [Set Up SSH tunneling on a Linux/Unix/BSD server to bypass NAT](https://www.cyberciti.biz/faq/set-up-ssh-tunneling-on-a-linux-unix-bsd-server-to-bypass-nat/)
+
 ### What is the difference between IDS and IPS?
 
 * __Firewall__ - A device or application that analyzes packet headers and enforces policy based on protocol type, source address, destination address, source port, and/or destination port. Packets that do not match policy are rejected.
@@ -724,11 +730,25 @@ Reference: [Linux Standard Base (Wikipedia)](https://en.wikipedia.org/wiki/Linux
 
 ### What is an atomic operation?
 
+An atomic operation is an operation that will always be executed without any other process being able to read or change state that is read or changed during the operation.
+
+References: 
+* [OSDev Wiki](https://wiki.osdev.org/Atomic_operation)
+* [Atomic vs. Non-Atomic Operations](https://preshing.com/20130618/atomic-vs-non-atomic-operations/)
+
 ### Your freshly configured http server is not running after a restart, what can you do?
+
+1. Check for error messages in the log (error.log, access.log).
+2. Perhaps the configuration file is not syntatically correct.
+3. Lack of resources on the host machine?
 
 ### What kind of keys are in ~/.ssh/authorized_keys and what it is this file used for?
 
+Authorized keys specify which users are allowed to log into a server using public key authentication in SSH. In OpenSSH, authorized keys are configured separately for each user, typically in a file called ``authorized_keys``.
+
 ### I've added my public ssh key into authorized_keys but I'm still getting a password prompt, what can be wrong?
+
+There could be a permission problem while accessing the authorized_keys file or the public key was not copied correctly. In general, this file should be created with the **ssh-copy-id** command.
 
 ### What does ```:(){ :|:& };:``` do on your system?
 
@@ -800,11 +820,38 @@ References:
 
 ### You ran a binary and nothing happened. How would you debug this?
 
+The best shot would be to run the binary preceded by the strace command: ``strace my_binary`` and looks into the output for some clues (missing configuration files, wrong libraries, etc.).
+
 ### What are cgroups? Can you specify a scenario where you could use them?
+
+**C**ontrol **g**roups are a feature of the Linux kernel. cgroups allow you to allocate resources - such as CPU time, system memory, network bandwidth, or combinations of these resources - among hierarchically ordered groups of processes running on a system. By using cgroups, system administrators gain fine-grained control over allocating, prioritizing, denying, managing, and monitoring system resources. Hardware resources can be smartly divided up among applications and users, increasing overall efficiency.
+
+Potential use case scenarios:
+* To keep a Web server from using all the memory on a system that's also running a data base.
+* To keep a backup system from using too much network I/O bandwidth and crashing the business apps running on the same system.
+* To allocate system resources among user groups of different priority (the faculty, staff and students of a university, for instance).
+
+Reference: [Resource Management Guide from RedHat](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/resource_management_guide/)
 
 ### How can you remove/delete a file with file-name consisting of only non-printable/non-type-able characters?
 
+There are different methods:
+
+1. Put filenames in quotes.
+2. Insert a backslash before the special character.
+3. Try a ``./`` at the beginning of the filename.
+4. Try a ``--`` at the beginning of the filename (it will signal ``rm`` to disable further option processing).
+5. Remove file by an inode number.
+
+Reference: [Remove files with names that contains spaces and special characters (Linux.com blog)](https://www.linux.com/blog/linux-shell-tip-remove-files-names-contains-spaces-and-special-characters-such)
+
 ### How can you increase or decrease the priority of a process in Linux?
 
-### What are run-levels in Linux?
+Priority (or niceness) of a process can be increased or decreased using the **nice** command from the GNU coreutils. Niceness values range from **-20** (most favorable to the process) to **19** (least favorable to the process). The niceness value of a process can be checked with the ``ps`` command (column **NI**). By default, a process started by a user has always niceness set to zero and only root can set it up to a negative number. In case it is necessary to modify the niceness of an already running process the command **renice** can be used. Additionally, there's also the **ionice** command (part of util-linux) which sets or gets the I/O scheduling class and priority for a program. Note that ionice only works with the CFQ disk scheduler but it's not able to affect RAID or LVM disks.
+
+References:
+* Man pages: ``man nice``; ``man renice``; ``man ionice``
+* [Process execution priorities (IBM DeveloperWorks Library)](https://www.ibm.com/developerworks/library/l-lpic1-103-6/index.html)
+* [Some notes on Linux's ionice](https://utcc.utoronto.ca/~cks/space/blog/linux/IoniceNotes)
+
 
