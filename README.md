@@ -13,6 +13,14 @@ The following repo is a small attempt to collect a little bit of Sysadmin knowle
 - [Monitorama Conference on Vimeo](https://vimeo.com/monitorama)
 - [FOSDEM Conference](https://video.fosdem.org/)
 - [The Linux Foundation](https://www.youtube.com/user/TheLinuxFoundation)
+- Linux Conf Australia (YouTube):
+  * [2012 Edition](https://www.youtube.com/channel/UChopCaqzUPDYkhX-7I1aM3Q)
+  * [2013 Edition](https://www.youtube.com/channel/UCGRmPEv0KQNVF4JYJkVUOoA)
+  * [2014 Edition](https://www.youtube.com/channel/UCOEcR4ekrL6OEsZnKEo1hrA)
+  * [2015 Edition](https://www.youtube.com/user/linuxconfau2015)
+  * [2016 Edition](https://www.youtube.com/user/linuxconfau2016)
+  * [2017 Edition](https://www.youtube.com/channel/UCDMo9DyACXG62ak5cVgs3TA)
+  * [2018 Edition](https://www.youtube.com/user/linuxconfau2018/videos)
 - [Systems We Love: links to all the talks (2016)](https://blog.bradfieldcs.com/all-the-talks-from-systems-we-love-debcd9cffca)
 
 ## Books
