@@ -15,6 +15,11 @@ The following repo is a small attempt to collect a little bit of Sysadmin knowle
 - [The Linux Foundation](https://www.youtube.com/user/TheLinuxFoundation)
 - [Systems We Love: links to all the talks (2016)](https://blog.bradfieldcs.com/all-the-talks-from-systems-we-love-debcd9cffca)
 
+## Books
+
+- [Google Site Reliability Engineering](https://landing.google.com/sre/book/)
+- [UNIX and Linux System Administration Handbook (5th Edition)](https://www.amazon.com/UNIX-Linux-System-Administration-Handbook/dp/0134277554)
+
 ## References
 
 - [Archlinux Wiki](https://wiki.archlinux.org/index.php/Table_of_contents)
