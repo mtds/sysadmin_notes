@@ -10,6 +10,8 @@ I took the liberty to reorganize or remove some of the questions, whenever I dee
   1. [Simple Linux Questions](#simple)
   1. [Medium Linux Questions](#medium)
   1. [Hard Linux Questions](#hard)
+  1. [Expert Linux Questions](#expert)
+  1. [Networking Questions](#network)
 
 #### [[⬆]](#toc) <a name='general'>General Questions:</a>
 
@@ -854,4 +856,84 @@ References:
 * [Process execution priorities (IBM DeveloperWorks Library)](https://www.ibm.com/developerworks/library/l-lpic1-103-6/index.html)
 * [Some notes on Linux's ionice](https://utcc.utoronto.ca/~cks/space/blog/linux/IoniceNotes)
 
+#### [[⬆]](#toc) <a name='expert'>Expert Linux Questions:</a>
+
+### A running process gets EAGAIN: Resource temporarily unavailable on reading a socket. How can you close this bad socket/file descriptor without killing the process?
+
+1. Get the PID of the process with ``pidof`` or ``pgrep``:
+```bash
+>>> pidof my_process
+3466
+```
+
+2. To get a list of the file descriptors related to the process: 
+```bash
+>>> ls -la /proc/3466/fd
+total 0
+dr-x------ 2 user group  0 Jun 27 10:35 .
+dr-xr-xr-x 9 user group  0 Jun 27 10:35 ..
+lrwx------ 1 user group 64 Jun 27 10:35 0 -> /dev/pts/3
+lrwx------ 1 user group 64 Jun 27 10:35 1 -> /dev/pts/3
+lrwx------ 1 user group 64 Jun 27 10:35 2 -> /dev/pts/3
+lrwx------ 1 user group 64 Jun 27 10:35 3 -> socket:[35799042]
+lrwx------ 1 user group 64 Jun 27 10:35 4 -> socket:[35799047]
+lrwx------ 1 user group 64 Jun 27 10:35 5 -> /dev/pts/3
+lrwx------ 1 user group 64 Jun 27 10:35 6 -> /dev/pts/3
+lrwx------ 1 user group 64 Jun 27 10:35 7 -> /dev/pts/3
+```
+
+3. Removing open sockets or interacting with them from outside of the process is not possible, so it is necessary to use an additional program like **GDB**:
+```bash
+>>> gdb
+[...]
+>>> (gdb) attach 3466
+[...]
+>>> p close(4)
+$1 = 0
+>>> (gdb) detach
+Detaching from program: /usr/bin/my_process, process 3466
+>>> (gdb) quit
+```
+
+Reference: [GNU libC: Error Codes](https://www.gnu.org/software/libc/manual/html_node/Error-Codes.html)
+
+#### [[⬆]](#toc) <a name='network'>Networking Questions:</a>
+
+### What is localhost and why would ping localhost fail?
+
+### What is the similarity between "ping" & "traceroute" ? How is traceroute able to find the hops.
+
+### What is the command used to show all open ports and/or socket connections on a machine?
+
+### Is 300.168.0.123 a valid IPv4 address?
+
+### Which IP ranges/subnets are "private" or "non-routable" (RFC 1918)?
+
+### What is a VLAN?
+
+### What is ARP and what is it used for?
+
+### What is the difference between TCP and UDP?
+
+### What is the purpose of a default gateway?
+
+### What is command used to show the routing table on a Linux box?
+
+### A TCP connection on a network can be uniquely defined by 4 things. What are those things?
+
+### When a client running a web browser connects to a web server, what is the source port and what is the destination port of the connection?
+
+### How do you add an IPv6 address to a specific interface?
+
+### You have added an IPv4 and IPv6 address to interface eth0. A ping to the v4 address is working but a ping to the v6 address gives you the response sendmsg: operation not permitted. What could be wrong?
+
+### What is SNAT and when should it be used?
+
+### Explain how could you ssh login into a Linux system that DROPs all new incoming packets using a SSH tunnel.
+
+### How do you stop a DDoS attack?
+
+### How can you see content of an ip packet?
+
+### What is IPoAC (RFC 1149)?
 
