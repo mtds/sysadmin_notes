@@ -901,23 +901,112 @@ Reference: [GNU libC: Error Codes](https://www.gnu.org/software/libc/manual/html
 
 ### What is localhost and why would ping localhost fail?
 
+In computer networking, __localhost__ is a hostname that means "this computer". It is used to access the network services that are running on the host via the loopback network interface. Using the loopback interface bypasses any local network interface hardware. The name localhost is reserved for loopback purposes by RFC 6761 (Special-Use Domain Names).
+
+If pinging localhost reports the following error:
+```bash
+>>> ping localhost
+ping: unknown host localhost
+```
+
+The following steps may help to identify and solve the prolem:
+
+1. Check the contents of ``/etc/hosts``. It should contain something like this:
+```bash
+127.0.0.1	localhost
+
+::1     ip6-localhost ip6-loopback
+```
+
+2. In case the problem persist, it is necessary to check if ``/etc/nsswitch.conf`` contains the following entry:
+```bash
+[...]
+hosts:   files dns
+[...]
+```
+
+It would be also useful to verify that the loopback interface is up:
+```bash
+>>> ip link show lo
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+```
+
+Reference: [Localhost (Wikipedia)](https://en.wikipedia.org/wiki/Localhost)
+
 ### What is the similarity between "ping" & "traceroute" ? How is traceroute able to find the hops.
+
+When data is sent over the Internet, it's sent in small blocks of data, called packets. Messages are divided into packets before they are sent, and each packet is then transmitted individually and can even follow different routes to its destination. Once all the packets forming a message arrive at the destination, they are recompiled into the original message.
+
+In order to debug timeouts during a connection to a remote server the utilities **ping** and **traceroute** will help to investigate such issues.
+
+__Ping__ measures the round-trip time for messages sent from the originating host to a destination computer that are echoed back to the source. It  operates by sending Internet Control Message Protocol (ICMP) echo request packets to the target host and waiting for an ICMP echo reply. The program reports errors, packet loss, and a statistical summary of the results, typically including the minimum, maximum, the mean round-trip times, and standard deviation of the mean.
+
+__Traceroute__ is a tool for displaying the route (path) and measuring transit delays of packets across an Internet Protocol (IP) network. The history of the route is recorded as the round-trip times of the packets received from each successive host (remote node) in the route (path); the sum of the mean times in each hop is a measure of the total time spent to establish the connection. Traceroute proceeds unless all (three) sent packets are lost more than twice, then the connection is lost and the route cannot be evaluated. Ping, on the other hand, only computes the final round-trip times from the destination point.
+
+Whilte traceroute (by default) uses UDP packets (on Unix-like systems), it can also uses ICMP and in that it is similar to ping.
+
+References:
+* [Traceroute (Wikipedia)](https://en.wikipedia.org/wiki/Traceroute)
+* [Ping (Wikipedia)](https://en.wikipedia.org/wiki/Ping_(networking_utility))
 
 ### What is the command used to show all open ports and/or socket connections on a machine?
 
+**netstat** can be used for this task: ``netstat -an`` (``-a``, shows both listening and non-listening sockets; ``-n``, show numerical addresses instead of trying to determine symbolic host, port or user names).
+
 ### Is 300.168.0.123 a valid IPv4 address?
+
+No, it's not valid. IPv4 addresses may be represented in any notation expressing a 32-bit integer value. In this form, the IP address must be expressed with a maximum of 4 bytes which means that any number part of the address itself has to be limited to the single byte range: 2^8 or 0-255 possible values.
 
 ### Which IP ranges/subnets are "private" or "non-routable" (RFC 1918)?
 
+Name         |CIDR block       |Address range                  |Number of addresses | Classful description
+-------------|-----------------|-------------------------------|--------------------|-----------------------
+24-bit block | 10.0.0.0/8      | 10.0.0.0 – 10.255.255.255     | 16.777.216         | Single Class A.
+20-bit block | 172.16.0.0/12   | 172.16.0.0 – 172.31.255.255   | 1.048.576          | Contiguous range of 16 Class B blocks.
+16-bit block | 192.168.0.0/16  | 192.168.0.0 – 192.168.255.255 | 65536	            | Contiguous range of 256 Class C blocks.
+
+Reference: [IPv4 (Wikipedia)](https://en.wikipedia.org/wiki/IPv4)
+
 ### What is a VLAN?
 
+VLANs permit you to subdivide an Ethernet switch into logically disparate virtual Ethernet switches. This allows a single Ethernet switch to act as though it's multiple physical Ethernet switches. VLANs work by applying tags to network packets and handling these tags in networking systems – creating the appearance and functionality of network traffic that is physically on a single network but acts as if it is split between separate networks. In this way, VLANs can keep network applications separate despite being connected to the same physical network, and without requiring multiple sets of cabling and networking devices to be deployed.
+
+References:
+* [VLAN (Wikipedia)](https://en.wikipedia.org/wiki/Virtual_LAN)
+* [How do VLANs work? (ServerFault)](https://serverfault.com/questions/188350/how-do-vlans-work)
+
 ### What is ARP and what is it used for?
+
+Address Resolution Protocol (ARP) exists solely to glue together the IP and Ethernet networking layers. Since networking hardware such as switches, hubs, and bridges operate on Ethernet frames, they are unaware of the higher layer data carried by these frames [9]. Similarly, IP layer devices, operating on IP packets need to be able to transmit their IP data on Ethernets. ARP defines the conversation by which IP capable hosts can exchange mappings of their Ethernet and IP addressing.
+
+ARP is used to locate the Ethernet address associated with a desired IP address. When a machine has a packet bound for another IP on a locally connected Ethernet network, it will send a broadcast Ethernet frame containing an ARP request onto the Ethernet. All machines with the same Ethernet broadcast address will receive this packet [10]. If a machine receives the ARP request and it hosts the IP requested, it will respond with the link layer address on which it will receive packets for that IP address. N.B., the arp_filter sysctl will alter this behaviour somewhat.
+
+Once the requestor receives the response packet, it associates the MAC address and the IP address. This information is stored in the arp cache. The arp cache can be manipulated with the ``ip neighbor`` and ``arp`` commands.
+
+Reference: [Guide to IP Layer Network Administration with Linux](http://linux-ip.net/html/ether-arp.html)
 
 ### What is the difference between TCP and UDP?
 
 ### What is the purpose of a default gateway?
 
-### What is command used to show the routing table on a Linux box?
+A gateway is a network node that serves as an access point to another network, often involving not only a change of addressing, but also a different networking technology. More narrowly defined, a router merely forwards packets between networks with different network prefixes. The networking software stack of each computer contains a routing table that specifies which interface is used for transmission and which router on the network is responsible for forwarding to a specific set of addresses. If none of these forwarding rules is appropriate for a given destination address, the __default gateway__ is chosen as the router of last resort.
+
+References:
+* [Gateways (Linux Network Admin Guide)](http://tldp.org/LDP/nag/node30.html#SECTION004430000)
+* [Default Gateway (Wikipedia)](https://en.wikipedia.org/wiki/Default_gateway)
+
+### What is the command used to show the routing table on a Linux box?
+
+On modern Linux distributions, the ``ip`` command can be used for this task:
+```bash
+>>> ip route
+192.168.99.0/24 dev eth0  scope link 
+127.0.0.0/8 dev lo  scope link 
+default via 192.168.99.254 dev eth0
+```
+
+Older Linux distributions usually supports the following two commands: ``netstat -rn`` or ``rounte -n``.
 
 ### A TCP connection on a network can be uniquely defined by 4 things. What are those things?
 
@@ -936,4 +1025,6 @@ Reference: [GNU libC: Error Codes](https://www.gnu.org/software/libc/manual/html
 ### How can you see content of an ip packet?
 
 ### What is IPoAC (RFC 1149)?
+
+[IP Datagrams on Avian Carriers](https://tools.ietf.org/html/rfc1149)
 
