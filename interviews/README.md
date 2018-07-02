@@ -988,6 +988,24 @@ Reference: [Guide to IP Layer Network Administration with Linux](http://linux-ip
 
 ### What is the difference between TCP and UDP?
 
+**TCP**
+
+* Reliability: TCP is connection-oriented protocol. When a file or message send it will get delivered unless connections fails. If connection lost, the server will request the lost part. There is no corruption while transferring a message.	
+* Ordered: If you send two messages along a connection, one after the other, you know the first message will get there first. You don’t have to worry about data arriving in the wrong order.	
+* Heavyweight: when the low level parts of the TCP "stream" arrive in the wrong order, resend requests have to be sent, and all the out of sequence parts have to be put back together, so requires a bit of work to piece together.	
+* Streaming: Data is read as a "stream", with nothing distinguishing where one packet ends and another begins. There may be multiple packets per read call.	
+* Examples: World Wide Web (Apache TCP port 80), e-mail (SMTP TCP port 25 Postfix MTA), File Transfer Protocol (FTP port 21) and Secure Shell (OpenSSH port 22) etc.
+
+**UDP**
+
+* Reliability: UDP is a connectionless protocol. When you a send a data or message, you don't know if it'll get there, it could get lost on the way. There may be corruption while transferring a message.
+* Ordered: If you send two messages out, you don't know what order they'll arrive in i.e. no ordered.
+* Lightweight: No ordering of messages, no tracking connections, etc. It's just fire and forget! This means it's a lot quicker, and the network card / OS have to do very little work to translate the data back from the packets.
+* Datagrams: Packets are sent individually and are guaranteed to be whole if they arrive. One packet per one read call.
+* Examples: Domain Name System (DNS UDP port 53), streaming media applications such as IPTV or movies, Voice over IP (VoIP), Trivial File Transfer Protocol (TFTP) and online multiplayer games etc.
+
+Reference: [Internet Protocol suite (Wikipedia)](https://en.wikipedia.org/wiki/Internet_protocol_suite)
+
 ### What is the purpose of a default gateway?
 
 A gateway is a network node that serves as an access point to another network, often involving not only a change of addressing, but also a different networking technology. More narrowly defined, a router merely forwards packets between networks with different network prefixes. The networking software stack of each computer contains a routing table that specifies which interface is used for transmission and which router on the network is responsible for forwarding to a specific set of addresses. If none of these forwarding rules is appropriate for a given destination address, the __default gateway__ is chosen as the router of last resort.
@@ -1010,19 +1028,24 @@ Older Linux distributions usually supports the following two commands: ``netstat
 
 ### A TCP connection on a network can be uniquely defined by 4 things. What are those things?
 
-### When a client running a web browser connects to a web server, what is the source port and what is the destination port of the connection?
+The TCP layer on either sides maintains table entries corresponding to the 4-tuple: remote-ip-address, remote-port, source-ip-address, source-port. This 4-tuple uniquely identifies a connection.
 
-### How do you add an IPv6 address to a specific interface?
+### When a client running a web browser connects to a web server, what is the source port and what is the destination port of the connection?
 
 ### You have added an IPv4 and IPv6 address to interface eth0. A ping to the v4 address is working but a ping to the v6 address gives you the response sendmsg: operation not permitted. What could be wrong?
 
 ### What is SNAT and when should it be used?
 
+__Source Network Address Translation__ (SNAT), usually implemented in Linux with iptables, let the network stack to rewrite the Source IP address in the IP header of the packet. This is necessary, for example, when several hosts have to share an Internet connection. We can then turn on ip forwarding in the kernel, and write an SNAT rule which will translate all packets going out from our local network to the source IP of our own Internet connection. Without doing this, the outside world would not know where to send reply packets, since our local networks mostly use the IANA specified IP addresses which are allocated for LAN networks. If we forwarded these packets as is, no one on the Internet would know that they were actually from us. The SNAT target does all the translation needed to do this kind of work, letting all packets leaving our LAN look as if they came from a single host, which would be our firewall.
+
 ### Explain how could you ssh login into a Linux system that DROPs all new incoming packets using a SSH tunnel.
 
 ### How do you stop a DDoS attack?
 
-### How can you see content of an ip packet?
+### How can you see the content of an IP packet?
+
+1. ``tcpdump -i eth0 -s0 -n -w /tmp/capture port some_port &``
+2. ``tcpdump -r /tmp/capture -A``
 
 ### What is IPoAC (RFC 1149)?
 
