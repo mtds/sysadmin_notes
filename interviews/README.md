@@ -934,6 +934,34 @@ It would be also useful to verify that the loopback interface is up:
 
 Reference: [Localhost (Wikipedia)](https://en.wikipedia.org/wiki/Localhost)
 
+### What is the command used to show all open ports and/or socket connections on a machine?
+
+**netstat** can be used for this task: ``netstat -an`` (``-a``, shows both listening and non-listening sockets; ``-n``, show numerical addresses instead of trying to determine symbolic host, port or user names).
+
+### What is the command used to show the routing table on a Linux box?
+
+On modern Linux distributions, the ``ip`` command can be used for this task:
+```bash
+>>> ip route
+192.168.99.0/24 dev eth0  scope link 
+127.0.0.0/8 dev lo  scope link 
+default via 192.168.99.254 dev eth0
+```
+
+Older Linux distributions usually supports the following two commands: ``netstat -rn`` or ``rounte -n``.
+
+### How can you see the content of an IP packet?
+
+1. ``tcpdump -i eth0 -s0 -n -w /tmp/capture port some_port &``
+2. ``tcpdump -r /tmp/capture -A``
+
+### You have added an IPv4 and IPv6 address to interface eth0. A ping to the v4 address is working but a ping to the v6 address gives you the response sendmsg: operation not permitted. What could be wrong?
+
+This kind of error message is usally generated whenever an iptables firewall is set up. First step would be to check the status of IPtables for the IPv6 networking stack: ``/sbin/ip6tables -vnL``.
+
+### Explain how could you login through SSH into a Linux system that DROPs all new incoming packets using an SSH tunnel.
+
+
 ### What is the similarity between "ping" & "traceroute" ? How is traceroute able to find the hops.
 
 When data is sent over the Internet, it's sent in small blocks of data, called packets. Messages are divided into packets before they are sent, and each packet is then transmitted individually and can even follow different routes to its destination. Once all the packets forming a message arrive at the destination, they are recompiled into the original message.
@@ -949,10 +977,6 @@ Whilte traceroute (by default) uses UDP packets (on Unix-like systems), it can a
 References:
 * [Traceroute (Wikipedia)](https://en.wikipedia.org/wiki/Traceroute)
 * [Ping (Wikipedia)](https://en.wikipedia.org/wiki/Ping_(networking_utility))
-
-### What is the command used to show all open ports and/or socket connections on a machine?
-
-**netstat** can be used for this task: ``netstat -an`` (``-a``, shows both listening and non-listening sockets; ``-n``, show numerical addresses instead of trying to determine symbolic host, port or user names).
 
 ### Is 300.168.0.123 a valid IPv4 address?
 
@@ -1014,38 +1038,19 @@ References:
 * [Gateways (Linux Network Admin Guide)](http://tldp.org/LDP/nag/node30.html#SECTION004430000)
 * [Default Gateway (Wikipedia)](https://en.wikipedia.org/wiki/Default_gateway)
 
-### What is the command used to show the routing table on a Linux box?
-
-On modern Linux distributions, the ``ip`` command can be used for this task:
-```bash
->>> ip route
-192.168.99.0/24 dev eth0  scope link 
-127.0.0.0/8 dev lo  scope link 
-default via 192.168.99.254 dev eth0
-```
-
-Older Linux distributions usually supports the following two commands: ``netstat -rn`` or ``rounte -n``.
-
 ### A TCP connection on a network can be uniquely defined by 4 things. What are those things?
 
 The TCP layer on either sides maintains table entries corresponding to the 4-tuple: remote-ip-address, remote-port, source-ip-address, source-port. This 4-tuple uniquely identifies a connection.
 
 ### When a client running a web browser connects to a web server, what is the source port and what is the destination port of the connection?
 
-### You have added an IPv4 and IPv6 address to interface eth0. A ping to the v4 address is working but a ping to the v6 address gives you the response sendmsg: operation not permitted. What could be wrong?
 
 ### What is SNAT and when should it be used?
 
 __Source Network Address Translation__ (SNAT), usually implemented in Linux with iptables, let the network stack to rewrite the Source IP address in the IP header of the packet. This is necessary, for example, when several hosts have to share an Internet connection. We can then turn on ip forwarding in the kernel, and write an SNAT rule which will translate all packets going out from our local network to the source IP of our own Internet connection. Without doing this, the outside world would not know where to send reply packets, since our local networks mostly use the IANA specified IP addresses which are allocated for LAN networks. If we forwarded these packets as is, no one on the Internet would know that they were actually from us. The SNAT target does all the translation needed to do this kind of work, letting all packets leaving our LAN look as if they came from a single host, which would be our firewall.
 
-### Explain how could you ssh login into a Linux system that DROPs all new incoming packets using a SSH tunnel.
-
 ### How do you stop a DDoS attack?
 
-### How can you see the content of an IP packet?
-
-1. ``tcpdump -i eth0 -s0 -n -w /tmp/capture port some_port &``
-2. ``tcpdump -r /tmp/capture -A``
 
 ### What is IPoAC (RFC 1149)?
 
