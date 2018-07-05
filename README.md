@@ -9,6 +9,7 @@ The following repo is a small attempt to collect a little bit of Sysadmin knowle
 ## Conferences
 
 - [USENIX Conferences on YouTube](https://www.youtube.com/user/USENIXAssociation/featured)
+- [Open Source Data Center conference](https://osdc.de/)
 - [DevConf (organized by Redhat) on YouTube](https://www.youtube.com/channel/UCmYAQDZIQGm_kPvemBc_qwg)
 - [Monitorama Conference on Vimeo](https://vimeo.com/monitorama)
 - [FOSDEM Conference](https://video.fosdem.org/)
