@@ -23,6 +23,7 @@ The following repo is a small attempt to collect a little bit of Sysadmin knowle
   * [2017 Edition](https://www.youtube.com/channel/UCDMo9DyACXG62ak5cVgs3TA)
   * [2018 Edition](https://www.youtube.com/user/linuxconfau2018/videos)
 - [Systems We Love: links to all the talks (2016)](https://blog.bradfieldcs.com/all-the-talks-from-systems-we-love-debcd9cffca)
+- [HighLoad: a conference for developers of high-load systems](http://highload.co/). Videos on the [YouTube channel](https://www.youtube.com/channel/UCwHL6WHUarjGfUM_586me8w).
 
 ## Books
 
